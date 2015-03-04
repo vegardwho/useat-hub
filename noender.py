@@ -1,7 +1,7 @@
 import numpy
 
 maxtemp = 50*10
-mintemp = 50
+mintemp = 5*10
 
 
 
