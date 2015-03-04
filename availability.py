@@ -1,11 +1,8 @@
-__author__ = 'Peder'
 
-#
 import requests
 
 
-
-# params: int, int, string
+# param: int, int, string
 # (room_id, number of seats available, hub password)
 def report_availability(room_id, num_available, token):
 
