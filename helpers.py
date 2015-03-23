@@ -49,8 +49,6 @@ def absolute_diff(former_list, current_list):
     diff = map(sub, current_list, former_list)
     return map(abs, diff)
 
-def larger_than(pixel_list,number):
-    if max(pixel_list) > number:
-        return True
-    else:
-        return False
+
+def is_max_larger_than(pixel_list, number):
+    return max(pixel_list) > number
