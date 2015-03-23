@@ -50,7 +50,7 @@ def absolute_diff(former_list, current_list):
     return map(abs, diff)
 
 def larger_than(pixel_list,number):
-    if (max(pixel_list) > number):
+    if max(pixel_list) > number:
         return True
-    else
+    else:
         return False
