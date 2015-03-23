@@ -27,9 +27,11 @@ version = pi.get_pigpio_version()
 # print 'PiGPIO version = '+str(version)
 handle = pi.i2c_open(1, 0x0a)  # open Omron D6T device at address 0x0a on bus 1
 
-#print "handle", handle
+previous_celsius_data = []
+
 
 def tick(i2c_bus, OMRON_1, data):
+    global previous_celsius_data
     # initialize the device based on Omron's appnote 1
     result = i2c_bus.write_byte(OMRON_1, 0x4c);
 
@@ -54,8 +56,14 @@ def tick(i2c_bus, OMRON_1, data):
     median_of_lowest_values = median(lowest_values)
     print 'median of 6 lowest values', median_of_lowest_values
     print 'difference between median and max', max_temp - median_of_lowest_values
+
+    if len(previous_celsius_data) == 16:
+        diff = absolute_diff(previous_celsius_data, celsius_data)
+        print 'max absolute diff from last frame', max(diff)
+
     img = convert_to_image(celsius_data)
     write_image('temperature.png', img)
+    previous_celsius_data = celsius_data
 
 
 try:
