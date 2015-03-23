@@ -1,3 +1,6 @@
+from operator import sub
+
+
 def convert_two_bytes_to_celsius(first_byte, second_byte):
     return (first_byte + 256 * second_byte) * 0.1
 
@@ -41,3 +44,7 @@ def median(x):
 def get_six_lowest_values(x):
     return sorted(x)[:6]
 
+
+def absolute_diff(former_list, current_list):
+    diff = map(sub, current_list, former_list)
+    return map(abs, diff)
