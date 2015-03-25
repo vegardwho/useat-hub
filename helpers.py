@@ -1,6 +1,6 @@
 from operator import sub
 import requests
-
+from datetime import timedelta
 
 def convert_two_bytes_to_celsius(first_byte, second_byte):
     return (first_byte + 256 * second_byte) * 0.1
@@ -84,3 +84,7 @@ def report_availability(room_id, is_available, hub_token):
     payload = {'is_available': 1 if is_available else 0, 'hub_token': hub_token}
     response = requests.post(url, payload)
     print response
+
+
+def get_frequency():
+    return timedelta(seconds=10)

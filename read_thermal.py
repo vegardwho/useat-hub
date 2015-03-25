@@ -52,12 +52,15 @@ def tick(i2c_bus, OMRON_1, data):
     moving = is_moving_human(celsius_data, previous_celsius_data)
     if moving:
         last_movement_detected = datetime.datetime.now()
-    recent_movement = last_movement_detected >= datetime.datetime.now() - datetime.timedelta(minutes=1)
-    recent_stationary = last_stationary_human_detected >= datetime.datetime.now() - datetime.timedelta(minutes=1)
+    recent_movement = last_movement_detected >= datetime.datetime.now() - get_frequency()
+    recent_stationary = last_stationary_human_detected >= datetime.datetime.now() - get_frequency()
     human_detected_recently = recent_movement or recent_stationary
     is_available = not human_detected_recently
-    
-    if last_time_reported <= datetime.datetime.now() - datetime.timedelta(minutes=1):
+    print 'last movement detected', last_movement_detected
+    print 'last stationary detected', last_stationary_human_detected
+    print 'is_available', is_available
+
+    if last_time_reported <= datetime.datetime.now() - get_frequency():
         report_availability(hub_config.ROOM_ID, is_available, hub_config.HUB_TOKEN)
         last_time_reported = datetime.datetime.now()
 
