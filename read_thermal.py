@@ -46,18 +46,6 @@ def tick(i2c_bus, OMRON_1, data):
         temperature_celsius = convert_two_bytes_to_celsius(data[i], data[i + 1])
         celsius_data.append(temperature_celsius)
 
-    #pretty_print_pixels(celsius_data)
-    max_temp = max(celsius_data)
-    print 'max temp', max_temp
-    lowest_values = get_six_lowest_values(celsius_data)
-    median_of_lowest_values = median(lowest_values)
-    print 'median of 6 lowest values', median_of_lowest_values
-    print 'difference between median and max', max_temp - median_of_lowest_values
-
-    if len(previous_celsius_data) == 16:
-        diff = absolute_diff(previous_celsius_data, celsius_data)
-        print 'max absolute diff from last frame', max(diff)
-
     stationary = is_stationary_human(celsius_data)
     if stationary:
         last_stationary_human_detected = datetime.datetime.now()
@@ -68,11 +56,11 @@ def tick(i2c_bus, OMRON_1, data):
     recent_stationary = last_stationary_human_detected >= datetime.datetime.now() - datetime.timedelta(minutes=1)
     human_detected_recently = recent_movement or recent_stationary
     is_available = not human_detected_recently
+    
     if last_time_reported <= datetime.datetime.now() - datetime.timedelta(minutes=1):
         report_availability(hub_config.ROOM_ID, is_available, hub_config.HUB_TOKEN)
+        last_time_reported = datetime.datetime.now()
 
-    #img = convert_to_image(celsius_data)
-    #write_image('temperature.png', img)
     previous_celsius_data = celsius_data
 
 
