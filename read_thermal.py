@@ -56,9 +56,9 @@ def tick(i2c_bus, OMRON_1, data):
     recent_stationary = last_stationary_human_detected >= datetime.datetime.now() - get_frequency()
     human_detected_recently = recent_movement or recent_stationary
     is_available = not human_detected_recently
-    print 'last movement detected', last_movement_detected
-    print 'last stationary detected', last_stationary_human_detected
-    print 'is_available', is_available
+    #print 'last movement detected', last_movement_detected
+    #print 'last stationary detected', last_stationary_human_detected
+    #print 'is_available', is_available
 
     if last_time_reported <= datetime.datetime.now() - get_frequency():
         report_availability(hub_config.ROOM_ID, is_available, hub_config.HUB_TOKEN)
@@ -68,10 +68,10 @@ def tick(i2c_bus, OMRON_1, data):
 
 
 try:
-    for i in range(200):
+    while True:
         tick(i2c_bus, OMRON_1, data)
         sleep(0.25)
 finally:
-    print 'finally done'
+    #print 'finally done'
     pi.i2c_close(handle)
     pi.stop()

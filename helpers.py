@@ -62,7 +62,7 @@ def is_stationary_human(celsius_data):
     diff_median_max = max_temp - median_of_lowest_values
 
     result = diff_median_max >= 2.2
-    print 'is stationary human detected:', result
+    #print 'is stationary human detected:', result
     return result
 
 
@@ -75,7 +75,7 @@ def is_moving_human(celsius_data, previous_celsius_data):
         if max_abs_diff_between_frames >= 0.4:
             result = True
 
-    print 'is moving human detected:', result
+    #print 'is moving human detected:', result
     return result
 
 
@@ -83,8 +83,8 @@ def report_availability(room_id, is_available, hub_token):
     url = 'http://useat-api.iver.io/rooms/' + str(room_id) + '/report_availability/'
     payload = {'is_available': 1 if is_available else 0, 'hub_token': hub_token}
     response = requests.post(url, payload)
-    print response
+    #print response
 
 
 def get_frequency():
-    return timedelta(seconds=10)
+    return timedelta(seconds=60)
