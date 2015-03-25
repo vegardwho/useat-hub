@@ -1,0 +1,4 @@
+requests==2.6.0
+pigpio==1.16
+smbus=1.1
+RPi.GPIO==0.5.11

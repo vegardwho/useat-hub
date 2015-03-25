@@ -15,6 +15,7 @@ from img_helper import write_image
 from helpers import *
 from time import sleep
 import datetime
+import hub_config
 
 i2c_bus = smbus.SMBus(1)
 OMRON_1 = 0x0a  # 7 bit I2C address of Omron MEMS Temp Sensor D6T-44L
@@ -28,9 +29,9 @@ version = pi.get_pigpio_version()
 handle = pi.i2c_open(1, 0x0a)  # open Omron D6T device at address 0x0a on bus 1
 
 previous_celsius_data = []
-last_movement_detected = None
-last_stationary_human_detected = None
-last_time_reported = None
+last_movement_detected = datetime.datetime.now() - datetime.timedelta(minutes=10)
+last_stationary_human_detected = datetime.datetime.now() - datetime.timedelta(minutes=10)
+last_time_reported = datetime.datetime.now() - datetime.timedelta(minutes=10)
 
 
 def tick(i2c_bus, OMRON_1, data):
@@ -63,6 +64,12 @@ def tick(i2c_bus, OMRON_1, data):
     moving = is_moving_human(celsius_data, previous_celsius_data)
     if moving:
         last_movement_detected = datetime.datetime.now()
+    recent_movement = last_movement_detected >= datetime.datetime.now() - datetime.timedelta(minutes=1)
+    recent_stationary = last_stationary_human_detected >= datetime.datetime.now() - datetime.timedelta(minutes=1)
+    human_detected_recently = recent_movement or recent_stationary
+    is_available = not human_detected_recently
+    if last_time_reported <= datetime.datetime.now() - datetime.timedelta(minutes=1):
+        report_availability(hub_config.ROOM_ID, is_available, hub_config.HUB_TOKEN)
 
     #img = convert_to_image(celsius_data)
     #write_image('temperature.png', img)

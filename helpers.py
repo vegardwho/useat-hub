@@ -1,4 +1,5 @@
 from operator import sub
+import requests
 
 
 def convert_two_bytes_to_celsius(first_byte, second_byte):
@@ -76,3 +77,10 @@ def is_moving_human(celsius_data, previous_celsius_data):
 
     print 'is moving human detected:', result
     return result
+
+
+def report_availability(room_id, is_available, hub_token):
+    url = 'http://useat-api.iver.io/rooms/' + str(room_id) + '/report_availability/'
+    payload = {'is_available': 1 if is_available else 0, 'hub_token': hub_token}
+    response = requests.post(url, payload)
+    print response
