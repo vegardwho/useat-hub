@@ -76,7 +76,3 @@ def is_moving_human(celsius_data, previous_celsius_data):
 
     print 'is moving human detected:', result
     return result
-
-
-def is_human_present(celsius_data, previous_celsius_data):
-    return is_stationary_human(celsius_data) or is_moving_human(celsius_data, previous_celsius_data)

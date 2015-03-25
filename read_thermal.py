@@ -28,12 +28,13 @@ version = pi.get_pigpio_version()
 handle = pi.i2c_open(1, 0x0a)  # open Omron D6T device at address 0x0a on bus 1
 
 previous_celsius_data = []
-last_time_human_detected = None
+last_movement_detected = None
+last_stationary_human_detected = None
 last_time_reported = None
 
 
 def tick(i2c_bus, OMRON_1, data):
-    global previous_celsius_data
+    global previous_celsius_data, last_movement_detected, last_stationary_human_detected, last_time_reported
 
     i2c_bus.write_byte(OMRON_1, 0x4c)
     (bytes_read, data) = pi.i2c_read_device(handle, len(data))
@@ -56,7 +57,12 @@ def tick(i2c_bus, OMRON_1, data):
         diff = absolute_diff(previous_celsius_data, celsius_data)
         print 'max absolute diff from last frame', max(diff)
 
-    print 'human detected', is_human_present(celsius_data, previous_celsius_data)
+    stationary = is_stationary_human(celsius_data)
+    if stationary:
+        last_stationary_human_detected = datetime.datetime.now()
+    moving = is_moving_human(celsius_data, previous_celsius_data)
+    if moving:
+        last_movement_detected = datetime.datetime.now()
 
     #img = convert_to_image(celsius_data)
     #write_image('temperature.png', img)
