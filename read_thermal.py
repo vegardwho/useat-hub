@@ -10,11 +10,11 @@
 import smbus
 import sys
 import getopt
-import time
 import pigpio
 from img_helper import write_image
 from helpers import *
 from time import sleep
+import datetime
 
 i2c_bus = smbus.SMBus(1)
 OMRON_1 = 0x0a  # 7 bit I2C address of Omron MEMS Temp Sensor D6T-44L
@@ -28,17 +28,15 @@ version = pi.get_pigpio_version()
 handle = pi.i2c_open(1, 0x0a)  # open Omron D6T device at address 0x0a on bus 1
 
 previous_celsius_data = []
+last_time_human_detected = None
+last_time_reported = None
 
 
 def tick(i2c_bus, OMRON_1, data):
     global previous_celsius_data
-    # initialize the device based on Omron's appnote 1
-    result = i2c_bus.write_byte(OMRON_1, 0x4c);
 
+    i2c_bus.write_byte(OMRON_1, 0x4c)
     (bytes_read, data) = pi.i2c_read_device(handle, len(data))
-
-    #PTAT = convert_two_bytes_to_celsius(temperature_data[0], temperature_data[1])
-    #print "PTAT:", PTAT
 
     celsius_data = []
 
@@ -46,12 +44,9 @@ def tick(i2c_bus, OMRON_1, data):
         temperature_celsius = convert_two_bytes_to_celsius(data[i], data[i + 1])
         celsius_data.append(temperature_celsius)
 
-    pretty_print_pixels(celsius_data)
-    min_temp = min(celsius_data)
+    #pretty_print_pixels(celsius_data)
     max_temp = max(celsius_data)
-    print 'min temp', min_temp
     print 'max temp', max_temp
-    print 'difference between min and max', max_temp - min_temp
     lowest_values = get_six_lowest_values(celsius_data)
     median_of_lowest_values = median(lowest_values)
     print 'median of 6 lowest values', median_of_lowest_values
@@ -61,8 +56,10 @@ def tick(i2c_bus, OMRON_1, data):
         diff = absolute_diff(previous_celsius_data, celsius_data)
         print 'max absolute diff from last frame', max(diff)
 
-    img = convert_to_image(celsius_data)
-    write_image('temperature.png', img)
+    print 'human detected', is_human_present(celsius_data, previous_celsius_data)
+
+    #img = convert_to_image(celsius_data)
+    #write_image('temperature.png', img)
     previous_celsius_data = celsius_data
 
 
